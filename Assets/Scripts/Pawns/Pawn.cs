@@ -6,14 +6,14 @@ namespace Pawns
     public class Pawn : MonoBehaviour
     {
         private Animator _animator;
-        private Rigidbody2D _rigidbody2D;
+        public Rigidbody2D Rigidbody2D { get; protected set; }
         
         public float moveSpeed;
 
         protected virtual void Start()
         {
             _animator = GetComponent<Animator>();
-            _rigidbody2D = GetComponent<Rigidbody2D>();
+            Rigidbody2D = GetComponent<Rigidbody2D>();
         }
         
         public void Move(Vector2 moveDir)
