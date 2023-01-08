@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace Pawns.Player
 {
-    public class Bullet : MonoBehaviour
+    public class Missile : MonoBehaviour
     {
         public float startMana = 10f;
         public GameObject hitEffect;

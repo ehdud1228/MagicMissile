@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Pawns.Player
 {
-    public class BulletController : MonoBehaviour
+    public class MissileController : MonoBehaviour
     {
         private float _nowTime = 0;
         private BulletPool _bulletPool;
