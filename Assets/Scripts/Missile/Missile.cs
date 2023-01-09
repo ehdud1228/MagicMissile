@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Impact;
 using Pawn.Enemies;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Pawns.Player
 {
@@ -10,30 +12,36 @@ namespace Pawns.Player
     {
         public float startMana = 10f;
         public GameObject hitEffect;
+        public Rigidbody2D rb;
         
         public bool isMove = false;
         
         private float _leftMana = 10f;
-        private BulletPool _bulletPool;
-
-        private Rigidbody2D _rigidbody2D;
+        private MissilePool _missilePool;
         
+        public List<IAddOn> StartAddOns = new List<IAddOn>(); 
+
         private void Awake()
         {
-            _bulletPool = FindObjectOfType<BulletPool>();
-            _rigidbody2D = GetComponent<Rigidbody2D>();
+            _missilePool = FindObjectOfType<MissilePool>();
+            rb = GetComponent<Rigidbody2D>();
+            
+            // tmp code
+            var mousePosition = Mouse.current.position.ReadValue();
+            var mouseWorldPosition = (Vector2)Camera.main.ScreenToWorldPoint(mousePosition);
+            var toMouseDirection = (mouseWorldPosition - (Vector2)PlayerController.Instance.transform.position).normalized;
+            var addForceAddOn = new AddForceAddOn(AddForceAddOn.ForceType.FixedForce, 3);
+            addForceAddOn.SetFixedForce(toMouseDirection);
+            StartAddOns.Add(addForceAddOn);
         }
 
         private void OnEnable()
         {
             _leftMana = startMana;
-            
-            // to Mouse Position with new Input System
-            var mousePosition = Mouse.current.position.ReadValue();
-            var mouseWorldPosition = (Vector2)Camera.main.ScreenToWorldPoint(mousePosition);
-            var direction = (mouseWorldPosition - (Vector2)PlayerController.Instance.transform.position).normalized;
-            _rigidbody2D.velocity = Vector2.zero;
-            _rigidbody2D.AddForce(direction * 3f);
+            foreach (var startAddOn in StartAddOns)
+            {
+                _leftMana -= startAddOn.ControlMissile(this);
+            }
         }
 
         private void Update()
@@ -52,8 +60,8 @@ namespace Pawns.Player
                 var hitEffect = Instantiate(this.hitEffect);
                 hitEffect.GetComponent<HitEffect>().Hit((int)_leftMana);
                 hitEffect.transform.position = col.transform.position;
-                _rigidbody2D.velocity = Vector2.zero;
-                _bulletPool.ReturnBullet(gameObject);
+                rb.velocity = Vector2.zero;
+                _missilePool.ReturnBullet(gameObject);
             }
         }
     }
