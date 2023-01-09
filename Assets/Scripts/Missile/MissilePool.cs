@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Pawns.Player
 {
-    public class BulletPool : MonoBehaviour
+    public class MissilePool : MonoBehaviour
     {
         // bullet pool
         public GameObject bulletPrefab;
